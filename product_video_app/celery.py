@@ -4,6 +4,7 @@ from celery import Celery
 # Set the default Django settings module for the 'celery' program.
 os.environ.setdefault('DJANGO_SETTINGS_MODULE', 'product_video_app.settings')
 
+# Create the Celery app, but don't load tasks immediately
 app = Celery('product_video_app')
 
 # Using a string here means the worker doesn't have to serialize
@@ -12,9 +13,9 @@ app = Celery('product_video_app')
 #   should have a `CELERY_` prefix.
 app.config_from_object('django.conf:settings', namespace='CELERY')
 
-# Load task modules from all registered Django app configs.
-app.autodiscover_tasks()
-
+# Delay task registration to avoid Django app registry issues
+# This follows CP-01: Clean code and NX-05: API Errors
+app.autodiscover_tasks(lambda: ['core'])
 
 @app.task(bind=True)
 def debug_task(self):
