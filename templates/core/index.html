@@ -6,7 +6,7 @@
 <div class="max-w-2xl mx-auto bg-white p-8 rounded-lg shadow-md">
     <h1 class="text-2xl font-bold mb-6 text-center text-gray-800">Create Your Product Video</h1>
 
-    <form method="post" enctype="multipart/form-data">
+    <form method="post" enctype="multipart/form-data" hx-boost="false">
         {% csrf_token %}
 
         <div class="space-y-4">
@@ -37,14 +37,18 @@
         </div>
 
         <div class="mt-6">
-            <button type="submit" class="w-full bg-blue-600 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded focus:outline-none focus:shadow-outline transition duration-150 ease-in-out">
+            <button id="submit-btn" type="submit" class="w-full bg-blue-600 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded focus:outline-none focus:shadow-outline transition duration-150 ease-in-out">
                 Generate Video
             </button>
         </div>
     </form>
 
     <!-- Placeholder for status updates/results via HTMX -->
-    <div id="generation-status" class="mt-8"></div> 
+    {% if last_task_id %}
+    <div id="generation-status" hx-get="{% url 'core:task_status' last_task_id %}" hx-trigger="load, every 2s" hx-swap="outerHTML"></div>
+    {% else %}
+    <div id="generation-status"></div>
+    {% endif %} 
 
 </div>
 {% endblock %}

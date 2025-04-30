@@ -27,3 +27,6 @@ node_modules/
 # Task files
 tasks.json
 tasks/ 
+readme-task-master.md
+example_prd.txt
+prd.txt

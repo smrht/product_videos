@@ -20,6 +20,10 @@ BASE_DIR = Path(__file__).resolve().parent.parent
 # Load .env file
 load_dotenv(os.path.join(BASE_DIR, '.env'))
 
+# --- DEBUG --- 
+# print(f"DEBUG: CLOUDFLARE_ACCOUNT_ID from env = {os.environ.get('CLOUDFLARE_ACCOUNT_ID')}") # Removed debug print
+# ------------- 
+
 # Quick-start development settings - unsuitable for production
 # See https://docs.djangoproject.com/en/5.2/howto/deployment/checklist/
 
@@ -43,6 +47,8 @@ INSTALLED_APPS = [
     "django.contrib.staticfiles",
     'core',  # Add the core app
     'storages',  # Add django-storages
+    'django_celery_results', # Add Celery results backend
+    'django_celery_beat', # Add Celery Beat scheduler
 ]
 
 MIDDLEWARE = [
@@ -53,6 +59,13 @@ MIDDLEWARE = [
     "django.contrib.auth.middleware.AuthenticationMiddleware",
     "django.contrib.messages.middleware.MessageMiddleware",
     "django.middleware.clickjacking.XFrameOptionsMiddleware",
+]
+
+# Add the browser preview proxy and dev server URLs
+CSRF_TRUSTED_ORIGINS = [
+    'http://127.0.0.1:8000',
+    'http://localhost:8000',
+    'http://127.0.0.1:61365', # Added for browser preview
 ]
 
 ROOT_URLCONF = "product_video_app.urls"
@@ -121,42 +134,39 @@ USE_I18N = True
 USE_TZ = True
 
 
+STATIC_URL = '/static/'
+STATIC_ROOT = os.path.join(BASE_DIR, 'static')
+
 # Static files (CSS, JavaScript, Images)
 # https://docs.djangoproject.com/en/5.2/howto/static-files/
 
-# S3 Storage Configuration (using django-storages and boto3)
+# S3 Storage Configuration (Using django-storages and boto3)
+# Modified for Cloudflare R2 (S3 Compatible)
 AWS_ACCESS_KEY_ID = os.environ.get('AWS_ACCESS_KEY_ID')
 AWS_SECRET_ACCESS_KEY = os.environ.get('AWS_SECRET_ACCESS_KEY')
 AWS_STORAGE_BUCKET_NAME = os.environ.get('AWS_STORAGE_BUCKET_NAME')
-AWS_S3_REGION_NAME = os.environ.get('AWS_S3_REGION_NAME', 'us-east-1') # Default region if not set
-AWS_S3_CUSTOM_DOMAIN = f'{AWS_STORAGE_BUCKET_NAME}.s3.amazonaws.com'
-AWS_S3_OBJECT_PARAMETERS = {
-    'CacheControl': 'max-age=86400',
-}
-AWS_DEFAULT_ACL = None # Recommended for security (use bucket policies instead)
-AWS_S3_SIGNATURE_VERSION = 's3v4'
-AWS_S3_ADDRESSING_STYLE = 'virtual' # Recommended
+CLOUDFLARE_ACCOUNT_ID = os.environ.get('CLOUDFLARE_ACCOUNT_ID')
 
-# Static and Media Files Configuration
-# Use S3 for media files in production
-# If DEBUG is False, use S3, otherwise use local storage for development
-if not DEBUG:
+if CLOUDFLARE_ACCOUNT_ID:
+    # print("DEBUG: Inside CLOUDFLARE_ACCOUNT_ID block") # Removed debug print
+    AWS_S3_ENDPOINT_URL = f'https://{CLOUDFLARE_ACCOUNT_ID}.r2.cloudflarestorage.com'
+    AWS_S3_REGION_NAME = 'auto' # R2 doesn't use regions like AWS S3
+    AWS_S3_SIGNATURE_VERSION = 's3v4'
+    AWS_S3_CUSTOM_DOMAIN = os.environ.get('AWS_S3_CUSTOM_DOMAIN', f'pub-284b5121bbd248b5b6c00f5358834653.r2.dev') # Added R2 Dev URL
+    AWS_S3_FILE_OVERWRITE = False # Optional: Set to True if you want to overwrite files with the same name
+    AWS_DEFAULT_ACL = None # Optional: R2 default is private
+    AWS_S3_VERIFY = True # Optional: Verify SSL certificates
+
     DEFAULT_FILE_STORAGE = 'storages.backends.s3boto3.S3Boto3Storage'
-    STATICFILES_STORAGE = 'storages.backends.s3boto3.S3Boto3Storage'
-    AWS_LOCATION = 'static' # Optional: subdirectory for static files in bucket
-    STATIC_URL = f'https://{AWS_S3_CUSTOM_DOMAIN}/{AWS_LOCATION}/'
+    # STATICFILES_STORAGE = 'storages.backends.s3boto3.S3StaticStorage' # Uncomment if serving static files from R2
 else:
-    # Development settings (local storage)
-    MEDIA_URL = '/media/'
-    MEDIA_ROOT = os.path.join(BASE_DIR, 'media')
-    STATIC_URL = '/static/'
-    STATIC_ROOT = os.path.join(BASE_DIR, 'staticfiles') # For collectstatic
-    # STATICFILES_DIRS = [os.path.join(BASE_DIR, 'static')] # Uncomment if you have a top-level static dir
+    # Fallback or default settings if not using R2 (optional)
+    print("WARNING: Cloudflare R2 Account ID not found in environment variables. S3 storage not fully configured.")
+    DEFAULT_FILE_STORAGE = 'django.core.files.storage.FileSystemStorage' # Default to local storage
 
-# Default primary key field type
-# https://docs.djangoproject.com/en/5.2/ref/settings/#default-auto-field
-
-DEFAULT_AUTO_FIELD = "django.db.models.BigAutoField"
+# --- DEBUG --- 
+# print(f"DEBUG: Final DEFAULT_FILE_STORAGE = {DEFAULT_FILE_STORAGE}") # Removed debug print
+# ------------- 
 
 # Celery Configuration Options
 # Read Redis URL from environment variable, default to localhost if not set
@@ -167,3 +177,8 @@ CELERY_TASK_SERIALIZER = 'json'
 CELERY_RESULT_SERIALIZER = 'json'
 CELERY_TIMEZONE = 'UTC' # Or your preferred timezone
 CELERY_TASK_TRACK_STARTED = True # Optional: Track task start times
+
+# Default primary key field type
+# https://docs.djangoproject.com/en/5.2/ref/settings/#default-auto-field
+
+DEFAULT_AUTO_FIELD = "django.db.models.BigAutoField"
