@@ -33,8 +33,7 @@ SECRET_KEY = os.environ.get('DJANGO_SECRET_KEY', 'django-insecure-placeholder-ke
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = os.environ.get('DEBUG', 'True') == 'True'
 
-ALLOWED_HOSTS = []
-
+ALLOWED_HOSTS = ['127.0.0.1', 'localhost', '.localhost']
 
 # Application definition
 
@@ -177,6 +176,15 @@ CELERY_TASK_SERIALIZER = 'json'
 CELERY_RESULT_SERIALIZER = 'json'
 CELERY_TIMEZONE = 'UTC' # Or your preferred timezone
 CELERY_TASK_TRACK_STARTED = True # Optional: Track task start times
+
+# AI API Configuration
+# OpenRouter for prompt generation
+OPENROUTER_API_KEY = os.environ.get('OPENROUTER_API_KEY')
+OPENAI_API_KEY = os.environ.get('OPENAI_API_KEY')
+FAL_API_KEY = os.environ.get('FAL_API_KEY')
+
+# Site URL for API integrations
+SITE_URL = os.environ.get('SITE_URL', 'http://localhost:8000')
 
 # Default primary key field type
 # https://docs.djangoproject.com/en/5.2/ref/settings/#default-auto-field

@@ -6,7 +6,7 @@
 <div class="max-w-2xl mx-auto bg-white p-8 rounded-lg shadow-md">
     <h1 class="text-2xl font-bold mb-6 text-center text-gray-800">Create Your Product Video</h1>
 
-    <form method="post" enctype="multipart/form-data" hx-boost="false">
+    <form id="video-form" method="post" enctype="multipart/form-data" hx-boost="false">
         {% csrf_token %}
 
         <div class="space-y-4">
@@ -38,10 +38,28 @@
 
         <div class="mt-6">
             <button id="submit-btn" type="submit" class="w-full bg-blue-600 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded focus:outline-none focus:shadow-outline transition duration-150 ease-in-out">
+                <span id="spinner" class="spinner hidden"></span>
                 Generate Video
             </button>
         </div>
     </form>
+
+    <script>
+        document.addEventListener('DOMContentLoaded', function() {
+            const form = document.getElementById('video-form');
+            const submitBtn = document.getElementById('submit-btn');
+            const spinner = document.getElementById('spinner');
+            
+            if (form) {
+                form.addEventListener('submit', function() {
+                    // Disable button and show spinner
+                    submitBtn.disabled = true;
+                    submitBtn.classList.add('opacity-75', 'cursor-not-allowed');
+                    spinner.classList.remove('hidden');
+                });
+            }
+        });
+    </script>
 
     <!-- Placeholder for status updates/results via HTMX -->
     {% if last_task_id %}
