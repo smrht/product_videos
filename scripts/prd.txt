@@ -1,0 +1,63 @@
+**Product Requirements Document (PRD): Taskmaster MCP - Product Video Micro-SaaS (v0.2)**
+
+**(Language: English)**
+
+**1. Goal & Introduction**
+*   **Goal:** Develop a micro-SaaS, codenamed "Taskmaster MCP", enabling e-commerce merchants to easily generate professional 3D turntable product videos from a single product photo.
+*   **Model:** Freemium. Offer an initial free trial (1 video per unique user/IP) to demonstrate value, with paid options for higher volume and advanced features.
+
+**2. Target Audience**
+*   E-commerce owners and marketers globally who need quick, affordable, and professional-looking product videos for marketing and product pages.
+
+**3. Core Functionalities (MVP)**
+*   **User Input (Web Form):**
+    *   Upload one product photo. (`UI/UX: Clear instructions, file size limits`)
+    *   Enter Product Title and Description. (`UI/UX: Tooltips with examples/best practices`)
+    *   Provide Email address (for notification and linking free credit). (`UI/UX: Tooltip explaining usage`)
+*   **Backend Processing (Asynchronous - Celery Tasks):**
+    *   **Abuse Prevention:** Check if IP address has already claimed a free generation. Implement rate limiting per IP. (`Rule: CP-02`)
+    *   Store uploaded photo to an S3-compatible bucket. (`Rule: TS-02, CP-01`)
+    *   Generate an optimized AI prompt for image *enhancement* using OpenRouter (e.g., via a predefined agent similar to the n8n workflow). (`Rule: TS-02, CP-02, NX-07`)
+    *   Enhance the product photo via OpenAI Image Edit API (or comparable via OpenRouter if available/suitable). (`Rule: CP-02, NX-07`)
+    *   Store the enhanced photo to S3.
+    *   Generate a 3D turntable product video (~10s, 1:1 ratio) via Fal AI (or comparable) using a *standard internal* video prompt. (`Rule: CP-02, NX-07`)
+    *   Use a task queue (Celery + Redis/RabbitMQ) for handling API calls and processing. (`Rule: CP-01, CP-03`)
+    *   Polling mechanism on the frontend (via HTMX) to track generation status (e.g., Queued, Processing Image, Processing Video, Done, Failed). (`Rule: NX-06`, `UI/UX: Clear status updates`)
+*   **Output & Notification:**
+    *   Email notification to the user upon video completion.
+    *   Frontend update (HTMX polling) displaying the generated video (e.g., pre-signed S3 URL or embedded player). (`UI/UX: Easy access/download`)
+*   **Limitations:**
+    *   Maximum 1 free video generation per unique IP address.
+
+**4. Extra Features (Paid Tiers / Post-MVP)**
+*   **Credit System:** Users purchase credits for:
+    *   Generating more than one video.
+    *   Accessing advanced customization options.
+*   **Advanced Customization:**
+    *   Ability for the user to provide a custom prompt for the *video* generation step.
+    *   Option to select different/premium AI models for both image enhancement and video generation (via OpenRouter or direct integration where necessary).
+
+**5. Non-Functional Requirements**
+*   **Asynchronous & Scalable:** Architecture must handle API latencies gracefully and scale with user growth. (`Rule: CP-01, CP-03`)
+*   **Reliability:** Robust error handling for API calls and background tasks. (`Rule: NX-05, NX-06`)
+*   **Cost Management:** Track API costs (OpenRouter, OpenAI, Fal AI, S3) per generation for margin calculation. (`Rule: CP-04`)
+*   **Security:** Secure API key management (env vars), user data protection, S3 bucket security, rate limiting. (`Rule: CP-02, SB-03, NX-07`)
+*   **UI/UX:** Intuitive, clean interface with clear guidance (tooltips, examples). Focus on a smooth "plug-and-play" experience for the core flow. (`Rule: -`)
+
+**6. Technology Stack (Proposed)**
+*   **Backend:** Python 3.x, Django 4.x/5.x (`Rule: TS-02`)
+*   **Frontend:** HTMX, Tailwind CSS (via CDN) (`Rule: -`)
+*   **Database:** PostgreSQL (`Rule: SB-01 - Adapted for Django ORM`)
+*   **Task Queue:** Celery, Redis (or RabbitMQ) (`Rule: TS-02`)
+*   **AI Orchestration:** OpenRouter API (`Rule: TS-02, NX-07`)
+*   **Specific AI Models:** OpenAI (Image Edit), Fal AI (Video Gen) - potentially others via OpenRouter for paid tiers. (`Rule: NX-07`)
+*   **Storage:** AWS S3 (or Cloudflare R2 / DigitalOcean Spaces) (`Rule: TS-02`)
+*   **Hosting:** Platform TBD (e.g., Appliku, Heroku, Fly.io) (`Rule: CI-01`)
+
+**7. Monetization**
+*   **Free Tier:** 1 video per unique IP address.
+*   **Paid Tier:** Purchase credits for additional videos and/or advanced features (custom prompts, model selection). Credit pricing based on API costs + margin.
+
+**8. Success Metrics**
+*   Primary: Number of credits sold.
+*   Secondary: Number of unique free users, conversion rate (free to paid), user satisfaction (feedback), cost per generation.
