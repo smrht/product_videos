@@ -199,3 +199,28 @@ def log_task_success(task_name: str, task_id: str, result: Any = None) -> None:
     safe_result = "<result object>" if result else None
     
     logger.info("Task %s with ID %s completed successfully", task_name, task_id)
+
+
+def log_task_error(task_name: str, task_id: str, error: Exception, msg: str = "") -> None:
+    """
+    Log a task failure.
+
+    Args:
+        task_name: Name of the task.
+        task_id: ID of the task.
+        error: The exception that occurred.
+        msg: Optional additional message.
+    """
+    error_type = error.__class__.__name__
+    error_message = str(error)
+    full_message = f"Task {task_name} [{task_id}] failed: {error_type}: {error_message}"
+    if msg:
+        full_message += f" - {msg}"
+    
+    # Log the main error message
+    logger.error(full_message)
+    
+    # Optionally log the traceback for more details, especially for unexpected errors
+    # Avoid logging traceback for known/handled exceptions unless necessary
+    if not isinstance(error, (CeleryTaskError, Retry)):
+        logger.exception(f"Traceback for error in task {task_id}:", exc_info=error)
