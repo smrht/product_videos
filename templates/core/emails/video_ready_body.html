@@ -1,0 +1,31 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Your Video is Ready!</title>
+    <style>
+        body { font-family: sans-serif; margin: 20px; color: #333; }
+        .container { max-width: 600px; margin: auto; border: 1px solid #ddd; padding: 20px; border-radius: 8px; }
+        h1 { color: #0056b3; }
+        a.button { display: inline-block; padding: 10px 20px; background-color: #007bff; color: #ffffff; text-decoration: none; border-radius: 5px; margin-top: 15px; }
+        img.thumbnail { max-width: 100%; height: auto; border-radius: 4px; margin-bottom: 15px; }
+        p { line-height: 1.6; }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>Good News! Your Video is Ready!</h1>
+        <p>Hi there,</p>
+        <p>Your product video for <strong>"{{ product_title }}"</strong> has been successfully generated.</p>
+        
+        <p>Click the button below to view and download your video:</p>
+        <a href="{{ video_url }}" class="button" target="_blank">View Your Video</a>
+        
+        <p>Or copy and paste this link into your browser:</p>
+        <p><a href="{{ video_url }}" target="_blank">{{ video_url }}</a></p>
+
+        <hr style="border: none; border-top: 1px solid #eee; margin: 20px 0;">
+        <p style="font-size: 0.9em; color: #777;">Thanks for using our service!</p>
+        <p style="font-size: 0.9em; color: #777;">- The Product Video Team</p>
+    </div>
+</body>
+</html>

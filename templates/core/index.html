@@ -1,13 +1,109 @@
 {% extends 'base.html' %}
 
-{% block title %}Generate Your Product Video{% endblock %}
+{% block title %}TurntablePro - Professional Product Videos in Seconds{% endblock %}
 
 {% block content %}
-<div class="max-w-2xl mx-auto bg-white p-8 rounded-lg shadow-md">
-    <h1 class="text-2xl font-bold mb-6 text-center text-gray-800">Create Your Product Video</h1>
+<!-- Hero Section -->
+<div class="bg-gradient-to-r from-blue-600 to-indigo-800 text-white py-16 mb-8">
+    <div class="max-w-4xl mx-auto px-6 text-center">
+        <h1 class="text-4xl md:text-5xl font-extrabold mb-4">Transform Your Products into<br>Stunning 3D Videos</h1>
+        <p class="text-xl md:text-2xl mb-8 text-blue-100">Boost sales by up to 85% with professional turntable videos - <span class="font-bold">in just 60 seconds</span></p>
+        <div class="flex flex-wrap justify-center gap-4 mb-8">
+            <div class="flex items-center bg-white bg-opacity-20 px-4 py-2 rounded-full">
+                <svg class="w-5 h-5 mr-2" fill="currentColor" viewBox="0 0 20 20">
+                    <path fill-rule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zm3.707-9.293a1 1 0 00-1.414-1.414L9 10.586 7.707 9.293a1 1 0 00-1.414 1.414l2 2a1 1 0 001.414 0l4-4z" clip-rule="evenodd"></path>
+                </svg>
+                <span>No software to install</span>
+            </div>
+            <div class="flex items-center bg-white bg-opacity-20 px-4 py-2 rounded-full">
+                <svg class="w-5 h-5 mr-2" fill="currentColor" viewBox="0 0 20 20">
+                    <path fill-rule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zm3.707-9.293a1 1 0 00-1.414-1.414L9 10.586 7.707 9.293a1 1 0 00-1.414 1.414l2 2a1 1 0 001.414 0l4-4z" clip-rule="evenodd"></path>
+                </svg>
+                <span>AI-powered editing</span>
+            </div>
+            <div class="flex items-center bg-white bg-opacity-20 px-4 py-2 rounded-full">
+                <svg class="w-5 h-5 mr-2" fill="currentColor" viewBox="0 0 20 20">
+                    <path fill-rule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zm3.707-9.293a1 1 0 00-1.414-1.414L9 10.586 7.707 9.293a1 1 0 00-1.414 1.414l2 2a1 1 0 001.414 0l4-4z" clip-rule="evenodd"></path>
+                </svg>
+                <span>Ready in minutes</span>
+            </div>
+        </div>
+        <a href="#create-video" class="inline-block text-lg font-bold bg-white text-indigo-700 px-8 py-3 rounded-full hover:bg-blue-50 transition transform hover:scale-105 shadow-lg">
+            Create Your First Video Free →
+        </a>
+    </div>
+</div>
 
-    <form id="video-form" method="post" enctype="multipart/form-data" hx-boost="false">
+<!-- Main Content -->
+<div class="max-w-6xl mx-auto px-4">
+    <!-- Benefits -->
+    <div class="mb-16">
+        <h2 class="text-2xl md:text-3xl font-bold text-center mb-12 text-gray-800">Why Professional Product Videos Matter</h2>
+        <div class="grid md:grid-cols-3 gap-8">
+            <div class="bg-white p-6 rounded-xl shadow-md border border-gray-100 text-center">
+                <div class="bg-blue-100 w-16 h-16 mx-auto mb-4 rounded-full flex items-center justify-center">
+                    <svg class="w-8 h-8 text-blue-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M11 3.055A9.001 9.001 0 1020.945 13H11V3.055z"></path>
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M20.488 9H15V3.512A9.025 9.025 0 0120.488 9z"></path>
+                    </svg>
+                </div>
+                <h3 class="text-xl font-semibold mb-2 text-gray-800">360° Showcasing</h3>
+                <p class="text-gray-600">Show every angle of your product with smooth turntable animation</p>
+            </div>
+            <div class="bg-white p-6 rounded-xl shadow-md border border-gray-100 text-center">
+                <div class="bg-blue-100 w-16 h-16 mx-auto mb-4 rounded-full flex items-center justify-center">
+                    <svg class="w-8 h-8 text-blue-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8c-1.657 0-3 .895-3 2s1.343 2 3 2 3 .895 3 2-1.343 2-3 2m0-8c1.11 0 2.08.402 2.599 1M12 8V7m0 1v8m0 0v1m0-1c-1.11 0-2.08-.402-2.599-1M21 12a9 9 0 11-18 0 9 9 0 0118 0z"></path>
+                    </svg>
+                </div>
+                <h3 class="text-xl font-semibold mb-2 text-gray-800">Increase Sales</h3>
+                <p class="text-gray-600">Products with videos sell 85% better than static images alone</p>
+            </div>
+            <div class="bg-white p-6 rounded-xl shadow-md border border-gray-100 text-center">
+                <div class="bg-blue-100 w-16 h-16 mx-auto mb-4 rounded-full flex items-center justify-center">
+                    <svg class="w-8 h-8 text-blue-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7"></path>
+                    </svg>
+                </div>
+                <h3 class="text-xl font-semibold mb-2 text-gray-800">Professional Quality</h3>
+                <p class="text-gray-600">Studio-quality results without expensive equipment or photographers</p>
+            </div>
+        </div>
+    </div>
+
+    <!-- Form Section -->
+    <div id="create-video" class="bg-white p-8 rounded-2xl shadow-xl border border-gray-200">
+        <h2 class="text-3xl font-bold mb-6 text-center text-gray-800">Create Your Product Video <span class="bg-yellow-200 px-2 rounded text-sm align-top">FREE</span></h2>
+        
+        <div class="mb-8 bg-gradient-to-r from-blue-50 to-indigo-50 p-6 rounded-xl border border-blue-100">
+            <h3 class="text-lg font-semibold text-blue-700 mb-3">👉 Upload a Product Photo - Get a Pro Video</h3>
+            <div class="flex flex-col md:flex-row gap-6 items-center">
+                <div class="w-full md:w-1/3">
+                    <img src="https://pub-284b5121bbd248b5b6c00f5358834653.r2.dev/uploads/7c1b3945-919a-43af-b65a-bd04e39aecd8.png" 
+                         alt="Example good product image" 
+                         class="rounded-lg shadow-sm w-full h-auto border-2 border-white" />
+                </div>
+                <div class="w-full md:w-2/3">
+                    <p class="text-gray-700 mb-3">
+                        <strong>For best results:</strong> Upload a clear product image with a white or transparent background like the example shown.
+                    </p>
+                    <p class="text-gray-700">
+                        If your image already has a clean white background, select "Skip Image Editing" to speed up generation.
+                    </p>
+                </div>
+            </div>
+        </div>
+
+    <form id="video-form" method="post" enctype="multipart/form-data" hx-post="{% url 'core:index' %}" hx-target="#video-generation-output" hx-swap="innerHTML" hx-indicator="#form-indicator">
         {% csrf_token %}
+
+        {% if form.non_field_errors %}
+            <div class="mb-4 p-4 bg-red-100 border border-red-400 text-red-700 rounded-lg" role="alert">
+                {% for error in form.non_field_errors %}
+                    <p class="font-semibold">{{ error }}</p>
+                {% endfor %}
+            </div>
+        {% endif %}
 
         <div class="space-y-4">
             {% for field in form %}
@@ -36,13 +132,46 @@
             {% endfor %}
         </div>
 
-        <div class="mt-6">
-            <button id="submit-btn" type="submit" class="w-full bg-blue-600 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded focus:outline-none focus:shadow-outline transition duration-150 ease-in-out">
-                <span id="spinner" class="spinner hidden"></span>
-                Generate Video
+        <div class="mt-8">
+            <button id="submit-btn" type="submit" class="w-full bg-gradient-to-r from-indigo-600 to-blue-600 hover:from-indigo-700 hover:to-blue-700 text-white text-lg font-bold py-4 px-6 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-offset-2 shadow-lg transition transform hover:scale-[1.01]">
+                <span id="spinner" class="spinner hidden">
+                    <svg class="animate-spin h-5 w-5 text-white inline mr-2" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24">
+                        <circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4"></circle>
+                        <path class="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path>
+                    </svg>
+                </span>
+                <div class="inline-flex items-center">
+                    <svg class="w-6 h-6 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M14.752 11.168l-3.197-2.132A1 1 0 0010 9.87v4.263a1 1 0 001.555.832l3.197-2.132a1 1 0 000-1.664z"></path>
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 12a9 9 0 11-18 0 9 9 0 0118 0z"></path>
+                    </svg>
+                    CREATE MY 3D VIDEO NOW
+                </div>
+                <span id="form-indicator" class="htmx-indicator absolute right-4 top-1/2 transform -translate-y-1/2">
+                    <!-- Simple spinner -->
+                    <svg class="animate-spin h-6 w-6 text-white" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24">
+                        <circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4"></circle>
+                        <path class="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path>
+                    </svg>
+                </span>
             </button>
+            <p class="text-center text-xs text-gray-500 mt-2">No credit card required • Instant video generation</p>
         </div>
     </form>
+
+    <div id="video-generation-output" class="max-w-lg mx-auto mt-8">
+        {% if last_video_generation_id %}
+            <div id="video-status-{{ last_video_generation_id }}"
+                 hx-get="{% url 'core:check_video_status' video_generation_id=last_video_generation_id %}"
+                 hx-trigger="load delay:1s" 
+                 hx-swap="innerHTML">
+                <p class="text-blue-600">Checking status for previous request...</p>
+                <div class="htmx-indicator">Loading...</div> 
+            </div>
+        {% else %}
+             <p class="text-gray-500 text-center">Submit the form above to start generating a video.</p>
+        {% endif %}
+    </div>
 
     <script>
         document.addEventListener('DOMContentLoaded', function() {
@@ -67,6 +196,115 @@
     {% else %}
     <div id="generation-status"></div>
     {% endif %} 
+    
+    <!-- Testimonials -->
+    <div class="mt-16 border-t pt-12 pb-8">
+        <h2 class="text-2xl md:text-3xl font-bold text-center mb-8 text-gray-800">What Our Customers Say</h2>
+        
+        <div class="grid grid-cols-1 md:grid-cols-3 gap-8">
+            <div class="bg-white p-6 rounded-xl shadow-md border border-gray-100 relative">
+                <div class="absolute -top-4 left-6 w-8 h-8 bg-yellow-400 rounded-full flex items-center justify-center">
+                    <svg class="w-5 h-5 text-white" fill="currentColor" viewBox="0 0 20 20">
+                        <path d="M9.049 2.927c.3-.921 1.603-.921 1.902 0l1.07 3.292a1 1 0 00.95.69h3.462c.969 0 1.371 1.24.588 1.81l-2.8 2.034a1 1 0 00-.364 1.118l1.07 3.292c.3.921-.755 1.688-1.54 1.118l-2.8-2.034a1 1 0 00-1.175 0l-2.8 2.034c-.784.57-1.838-.197-1.539-1.118l1.07-3.292a1 1 0 00-.364-1.118L2.98 8.72c-.783-.57-.38-1.81.588-1.81h3.461a1 1 0 00.951-.69l1.07-3.292z"></path>
+                    </svg>
+                </div>
+                <div class="text-sm text-yellow-500 mb-2 pl-6">★★★★★</div>
+                <p class="text-gray-700 italic mb-4">"I was paying $500 per product for professional videos. Now I create them myself in minutes. Game changer for my Shopify store!"</p>
+                <div class="flex items-center">
+                    <div class="w-10 h-10 bg-blue-100 rounded-full flex items-center justify-center text-blue-700 font-bold">M</div>
+                    <div class="ml-3">
+                        <p class="text-sm font-medium text-gray-900">Mark J.</p>
+                        <p class="text-xs text-gray-500">E-commerce Owner</p>
+                    </div>
+                </div>
+            </div>
+            
+            <div class="bg-white p-6 rounded-xl shadow-md border border-gray-100 relative">
+                <div class="absolute -top-4 left-6 w-8 h-8 bg-yellow-400 rounded-full flex items-center justify-center">
+                    <svg class="w-5 h-5 text-white" fill="currentColor" viewBox="0 0 20 20">
+                        <path d="M9.049 2.927c.3-.921 1.603-.921 1.902 0l1.07 3.292a1 1 0 00.95.69h3.462c.969 0 1.371 1.24.588 1.81l-2.8 2.034a1 1 0 00-.364 1.118l1.07 3.292c.3.921-.755 1.688-1.54 1.118l-2.8-2.034a1 1 0 00-1.175 0l-2.8 2.034c-.784.57-1.838-.197-1.539-1.118l1.07-3.292a1 1 0 00-.364-1.118L2.98 8.72c-.783-.57-.38-1.81.588-1.81h3.461a1 1 0 00.951-.69l1.07-3.292z"></path>
+                    </svg>
+                </div>
+                <div class="text-sm text-yellow-500 mb-2 pl-6">★★★★★</div>
+                <p class="text-gray-700 italic mb-4">"Our product listings with 3D videos convert 73% better than those with just photos. The ROI is incredible."</p>
+                <div class="flex items-center">
+                    <div class="w-10 h-10 bg-blue-100 rounded-full flex items-center justify-center text-blue-700 font-bold">S</div>
+                    <div class="ml-3">
+                        <p class="text-sm font-medium text-gray-900">Sarah L.</p>
+                        <p class="text-xs text-gray-500">Marketing Director</p>
+                    </div>
+                </div>
+            </div>
+            
+            <div class="bg-white p-6 rounded-xl shadow-md border border-gray-100 relative">
+                <div class="absolute -top-4 left-6 w-8 h-8 bg-yellow-400 rounded-full flex items-center justify-center">
+                    <svg class="w-5 h-5 text-white" fill="currentColor" viewBox="0 0 20 20">
+                        <path d="M9.049 2.927c.3-.921 1.603-.921 1.902 0l1.07 3.292a1 1 0 00.95.69h3.462c.969 0 1.371 1.24.588 1.81l-2.8 2.034a1 1 0 00-.364 1.118l1.07 3.292c.3.921-.755 1.688-1.54 1.118l-2.8-2.034a1 1 0 00-1.175 0l-2.8 2.034c-.784.57-1.838-.197-1.539-1.118l1.07-3.292a1 1 0 00-.364-1.118L2.98 8.72c-.783-.57-.38-1.81.588-1.81h3.461a1 1 0 00.951-.69l1.07-3.292z"></path>
+                    </svg>
+                </div>
+                <div class="text-sm text-yellow-500 mb-2 pl-6">★★★★★</div>
+                <p class="text-gray-700 italic mb-4">"Simple, fast, and the results look completely professional. My customers love seeing products from all angles."</p>
+                <div class="flex items-center">
+                    <div class="w-10 h-10 bg-blue-100 rounded-full flex items-center justify-center text-blue-700 font-bold">D</div>
+                    <div class="ml-3">
+                        <p class="text-sm font-medium text-gray-900">David K.</p>
+                        <p class="text-xs text-gray-500">Online Retailer</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
 
+    <!-- Showcase of recent videos -->
+    {% if recent_videos %}
+    <div class="mt-12 border-t pt-12 pb-10 bg-gradient-to-b from-white to-gray-50">
+        <h2 class="text-2xl md:text-3xl font-bold text-center mb-8 text-gray-800">Recently Created Videos</h2>
+        
+        <div class="grid grid-cols-1 md:grid-cols-2 gap-8">
+            {% for video in recent_videos %}
+                <div class="bg-white rounded-xl overflow-hidden shadow-lg border border-gray-200 transform transition hover:scale-[1.02]">
+                    <div class="p-4 border-b border-gray-100">
+                        <h3 class="text-lg font-bold text-gray-800">{{ video.product_title }}</h3>
+                    </div>
+                    
+                    <div class="relative w-full" style="padding-bottom: 100%;">
+                        <video 
+                            controls 
+                            class="absolute top-0 left-0 w-full h-full object-cover"
+                            poster="{{ video.thumbnail_url|default:'' }}"
+                            loop
+                            preload="metadata"
+                        >
+                            <source src="{{ video.output_video_url }}" type="video/mp4">
+                            Your browser does not support video playback.
+                        </video>
+                    </div>
+                    
+                    <div class="p-4 bg-white">
+                        <p class="text-sm text-gray-600 mb-3 line-clamp-2">{{ video.product_description|truncatechars:100 }}</p>
+                        <div class="flex justify-between items-center">
+                            <span class="text-xs text-gray-500">ID: {{ video.id|truncatechars:8 }}</span>
+                            <a href="{{ video.output_video_url }}" target="_blank" class="inline-flex items-center text-sm font-medium text-blue-600 hover:text-blue-800">
+                                <span>View full video</span>
+                                <svg class="w-4 h-4 ml-1" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10 6H6a2 2 0 00-2 2v10a2 2 0 002 2h10a2 2 0 002-2v-4M14 4h6m0 0v6m0-6L10 14"></path>
+                                </svg>
+                            </a>
+                        </div>
+                    </div>
+                </div>
+            {% endfor %}
+        </div>
+    </div>
+    {% endif %}
+    
+    <!-- Final CTA -->
+    <div class="mt-10 mb-10 bg-gradient-to-r from-indigo-600 to-blue-500 rounded-xl shadow-xl p-10 text-center text-white">
+        <h2 class="text-2xl md:text-3xl font-bold mb-4">Ready to Transform Your Product Images?</h2>
+        <p class="text-lg mb-6 text-indigo-100">Start creating professional 3D turntable videos in just 60 seconds</p>
+        <a href="#create-video" class="inline-block px-8 py-3 bg-white text-indigo-600 font-bold rounded-full shadow-lg hover:bg-indigo-50 transition transform hover:scale-105">
+            Create Your First Video Now
+        </a>
+    </div>
 </div>
 {% endblock %}

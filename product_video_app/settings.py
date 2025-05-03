@@ -54,6 +54,7 @@ MIDDLEWARE = [
     "django.middleware.security.SecurityMiddleware",
     "django.contrib.sessions.middleware.SessionMiddleware",
     "django.middleware.common.CommonMiddleware",
+    'core.middleware.IPMiddleware', # Add IP Middleware here
     "django.middleware.csrf.CsrfViewMiddleware",
     "django.contrib.auth.middleware.AuthenticationMiddleware",
     "django.contrib.messages.middleware.MessageMiddleware",
@@ -153,11 +154,14 @@ if CLOUDFLARE_ACCOUNT_ID:
     AWS_S3_SIGNATURE_VERSION = 's3v4'
     AWS_S3_CUSTOM_DOMAIN = os.environ.get('AWS_S3_CUSTOM_DOMAIN', f'pub-284b5121bbd248b5b6c00f5358834653.r2.dev') # Added R2 Dev URL
     AWS_S3_FILE_OVERWRITE = False # Optional: Set to True if you want to overwrite files with the same name
-    AWS_DEFAULT_ACL = None # Optional: R2 default is private
-    AWS_S3_VERIFY = True # Optional: Verify SSL certificates
 
+    # Use S3Boto3Storage for media files so uploads go straight to R2
     DEFAULT_FILE_STORAGE = 'storages.backends.s3boto3.S3Boto3Storage'
-    # STATICFILES_STORAGE = 'storages.backends.s3boto3.S3StaticStorage' # Uncomment if serving static files from R2
+
+    # Make uploaded objects publicly readable and serve over the custom domain without signed URLs
+    AWS_DEFAULT_ACL = 'public-read'
+    AWS_QUERYSTRING_AUTH = False
+    AWS_S3_ADDRESSING_STYLE = 'virtual'
 else:
     # Fallback or default settings if not using R2 (optional)
     print("WARNING: Cloudflare R2 Account ID not found in environment variables. S3 storage not fully configured.")
@@ -166,6 +170,16 @@ else:
 # --- DEBUG --- 
 # print(f"DEBUG: Final DEFAULT_FILE_STORAGE = {DEFAULT_FILE_STORAGE}") # Removed debug print
 # ------------- 
+
+# Email Configuration (Console Backend for Dev)
+# --------------------------------------------------------------------------
+EMAIL_BACKEND = 'django.core.mail.backends.console.EmailBackend'
+EMAIL_HOST = 'localhost'  # Not used by console backend, but good practice
+EMAIL_PORT = 1025         # Not used by console backend
+EMAIL_HOST_USER = ''      # Not used by console backend
+EMAIL_HOST_PASSWORD = ''  # Not used by console backend
+EMAIL_USE_TLS = False     # Not used by console backend
+DEFAULT_FROM_EMAIL = 'noreply@productvideocreator.com' # Example
 
 # Celery Configuration Options
 # Read Redis URL from environment variable, default to localhost if not set
@@ -179,12 +193,15 @@ CELERY_TASK_TRACK_STARTED = True # Optional: Track task start times
 
 # AI API Configuration
 # OpenRouter for prompt generation
-OPENROUTER_API_KEY = os.environ.get('OPENROUTER_API_KEY')
-OPENAI_API_KEY = os.environ.get('OPENAI_API_KEY')
-FAL_API_KEY = os.environ.get('FAL_API_KEY')
+OPENROUTER_API_KEY = os.getenv('OPENROUTER_API_KEY')
+OPENAI_API_KEY = os.getenv('OPENAI_API_KEY')
+FAL_API_KEY = os.getenv('FAL_API_KEY') # Add Fal AI API Key setting (NX-07)
 
 # Site URL for API integrations
 SITE_URL = os.environ.get('SITE_URL', 'http://localhost:8000')
+
+# Full URL for accessing media files from external services like Fal.ai
+MEDIA_URL_EXTERNAL = os.environ.get('MEDIA_URL_EXTERNAL', f"https://{os.environ.get('AWS_S3_CUSTOM_DOMAIN', 'pub-284b5121bbd248b5b6c00f5358834653.r2.dev')}")
 
 # Default primary key field type
 # https://docs.djangoproject.com/en/5.2/ref/settings/#default-auto-field

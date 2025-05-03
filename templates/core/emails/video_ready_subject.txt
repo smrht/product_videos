@@ -1,0 +1,1 @@
+Your Product Video for "{{ product_title }}" is Ready!

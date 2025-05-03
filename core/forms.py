@@ -26,3 +26,20 @@ class ProductVideoForm(forms.Form):
         widget=forms.EmailInput(attrs={'placeholder': 'your.email@example.com'}),
         help_text='We will send the generated video link to this email.'
     )
+    
+    video_duration = forms.ChoiceField(
+        label='Video Duration',
+        required=True,
+        choices=[('5', '5 seconds'), ('10', '10 seconds')],
+        initial='5',
+        widget=forms.RadioSelect(),
+        help_text='Select the duration of your product video.'
+    )
+    
+    skip_image_editing = forms.BooleanField(
+        label='Skip Image Editing',
+        required=False,
+        initial=False,
+        widget=forms.CheckboxInput(attrs={'class': 'form-checkbox h-5 w-5 text-blue-600'}),
+        help_text='Select this if your product image already has a clean white background. Only PNG, JPG or WEBP files can be used with this option. PDF files are not supported for direct video generation.'
+    )

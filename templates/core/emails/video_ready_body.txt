@@ -1,0 +1,10 @@
+Hi there,
+
+Good news! Your product video for "{{ product_title }}" has been successfully generated.
+
+You can view and download it here:
+{{ video_url }}
+
+Thanks for using our service!
+
+- The Product Video Team

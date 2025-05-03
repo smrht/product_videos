@@ -1,0 +1,9 @@
+{# Initial container returned after form submission, starts polling #}
+<div id="video-status-{{ video_generation_id }}"
+     hx-get="{% url 'core:check_video_status' video_generation_id=video_generation_id %}"
+     hx-trigger="load delay:1s, every 5s"
+     hx-swap="innerHTML">
+    <p class="text-blue-600">Video generation started... Checking status...</p>
+    {# Optional: Add a loading indicator here #}
+    <div class="htmx-indicator">Loading...</div>
+</div>

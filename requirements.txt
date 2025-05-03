@@ -29,3 +29,4 @@ wcwidth==0.2.13
 openai>=1.0.0 # Toegevoegd voor OpenAI API integratie (TS-02)
 # python-open-router>=0.1.0 # Removed, not needed per OpenRouter docs
 Pillow>=10.0.0 # Added for image format conversion
+fal-client>=0.1.0 # Added for Fal AI video generation (TS-02)
