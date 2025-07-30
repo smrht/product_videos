@@ -31,3 +31,4 @@ openai>=1.0.0 # Toegevoegd voor OpenAI API integratie (TS-02)
 Pillow>=10.0.0 # Added for image format conversion
 fal-client>=0.1.0 # Added for Fal AI video generation (TS-02)
 django-celery-results>=2.5.0 # Added for Celery result backend support
+django-celery-beat>=2.7.0 # Added for Celery periodic task scheduling
