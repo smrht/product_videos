@@ -10,8 +10,15 @@ from celery.result import AsyncResult
 import uuid
 import os
 import logging
+from PIL import Image  # Import Pillow
+from django.conf import settings # Import settings
 
 logger = logging.getLogger(__name__)
+
+# --- Constants for Image Validation ---
+MIN_IMAGE_WIDTH = 300
+MIN_IMAGE_HEIGHT = 300
+MAX_IMAGE_SIZE_MB = 10 # Example limit: 10MB
 
 # Create your views here.
 def index_view(request):
@@ -39,6 +46,37 @@ def index_view(request):
                 # Render the full page with the error, not just a partial
                 return render(request, 'core/index.html', context)
             # --- End Rate Limiting Check ---
+
+            # --- Image Validation ---
+            uploaded_file = request.FILES['product_photo']
+
+            # 1. Check file size
+            if uploaded_file.size > MAX_IMAGE_SIZE_MB * 1024 * 1024:
+                 logger.warning(f"Uploaded file size {uploaded_file.size} bytes exceeds limit of {MAX_IMAGE_SIZE_MB}MB.")
+                 form.add_error('product_photo', f"Image file size cannot exceed {MAX_IMAGE_SIZE_MB}MB.")
+                 return render(request, 'core/index.html', {'form': form})
+
+            # 2. Check image dimensions using Pillow
+            try:
+                 img = Image.open(uploaded_file)
+                 width, height = img.size
+                 img.verify() # Verify image integrity
+                 # Re-open after verify: https://pillow.readthedocs.io/en/stable/reference/Image.html#PIL.Image.Image.verify
+                 img = Image.open(uploaded_file)
+                 width, height = img.size # Get dimensions again
+
+                 if width < MIN_IMAGE_WIDTH or height < MIN_IMAGE_HEIGHT:
+                     logger.warning(f"Uploaded image dimensions {width}x{height} are below minimum requirement {MIN_IMAGE_WIDTH}x{MIN_IMAGE_HEIGHT}.")
+                     form.add_error('product_photo', f"Image dimensions must be at least {MIN_IMAGE_WIDTH}x{MIN_IMAGE_HEIGHT} pixels.")
+                     return render(request, 'core/index.html', {'form': form})
+
+            except Exception as e: # Catch potential Pillow errors (corrupt file, etc.)
+                 logger.error(f"Error validating image: {e}", exc_info=True)
+                 form.add_error('product_photo', "Could not process the image file. Please ensure it's a valid image (JPG, PNG, WEBP).")
+                 return render(request, 'core/index.html', {'form': form})
+            finally:
+                # Ensure the file pointer is reset if Pillow moved it
+                uploaded_file.seek(0)
 
             uploaded_file = form.cleaned_data['product_photo']
             email = form.cleaned_data['email']

@@ -8,10 +8,10 @@
             {# Script removed, polling stopped by not rendering hx-trigger below #}
             
             <!-- 1:1 aspect ratio container for square videos -->
-            <div class="relative w-full max-w-3xl mx-auto" style="padding-bottom: 100%;">
+            <div class="relative w-full max-w-lg mx-auto" style="padding-bottom: 100%;">
                 <video 
                     controls 
-                    class="absolute top-0 left-0 w-full h-full rounded-lg shadow-md object-cover"
+                    class="absolute top-0 left-0 w-full h-full rounded-lg shadow-md object-contain"
                     poster="{{ video_gen.thumbnail_url|default:"" }}"
                     playsinline
                     loop

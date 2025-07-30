@@ -142,74 +142,76 @@ class FalService:
                             if status_value == 'COMPLETED':
                                 logger.info(f"Request completed on attempt {attempt+1}")
                                 completion_status = True
-                                break
-                            elif status_value in ('FAILED', 'CANCELLED', 'ERROR'):
-                                error_msg = status_data.get('message', 'Unknown error')
-                                raise FalServiceError(f"Fal AI request failed: {error_msg}")
-                    except (ValueError, json.JSONDecodeError) as e:
-                        logger.warning(f"Status poll attempt {attempt+1} returned invalid JSON: {e}")
-                        # Just log and continue polling
-                except requests.RequestException as e:
-                    logger.warning(f"Status poll attempt {attempt+1} failed with request error: {e}")
-                    # Don't stop polling on request error
+                                break  # Exit loop on completion
+                            elif status_value in ['FAILED', 'ERROR']:
+                                error_detail = status_data.get('logs', 'No specific error detail provided.')
+                                logger.error(f"Fal AI job failed with status {status_value}. Detail: {error_detail}")
+                                raise FalServiceError(f"Fal AI job failed: {status_value}. Detail: {error_detail}")
+                            # Other statuses like IN_PROGRESS, IN_QUEUE: continue polling
+                            
+                        else:
+                            logger.warning(f"'status' key not found in status response data: {status_data}")
+                            # Consider how to handle this - maybe retry or fail?
+                            
+                    except requests.exceptions.JSONDecodeError:
+                        logger.error(f"Failed to decode JSON from status response. Status code: {status_resp.status_code}, Response text: {status_resp.text}")
+                        # Optionally, handle specific status codes like 5xx differently
+                        
+                    # Always raise for bad status codes *after* trying to log useful info
+                    status_resp.raise_for_status() 
+                    
+                except requests.exceptions.RequestException as e:
+                    logger.error(f"Error polling Fal AI status on attempt {attempt+1}: {e}")
+                    # Consider retry logic or failure after several attempts
+                    if attempt == max_polls - 1:
+                        raise FalServiceError(f"Failed to get Fal AI status after {max_polls} attempts: {e}") from e
                 
-                # Wait before trying again
-                logger.info(f"Waiting {poll_interval}s before next status check ({attempt+1}/{max_polls})")
+                logger.info(f"Waiting {poll_interval}s before next status check ({attempt + 1}/{max_polls})")
                 time.sleep(poll_interval)
-            
-            # 2. Now get the result - even if status polling had issues
-            # This is the direct result URL per documentation
-            result_endpoint = f"fal-ai/kling-video/requests/{request_id}"
-            result_url = urljoin(self.base_url, result_endpoint)
+                
+            if not completion_status:
+                raise FalServiceError(f"Fal AI job did not complete after {max_polls} attempts.")
+                
+            # 2. Fetch the final result if completed
+            result_url = status_data.get('response_url')
+            if not result_url:
+                raise FalServiceError("No response_url found in completed status data.")
+                
+            # Add a small delay before fetching the result
+            logger.info("Completion detected. Waiting 2 seconds before fetching result...")
+            time.sleep(2)
             
             logger.info(f"Fetching final result from {result_url}")
-            
             try:
-                result_resp = requests.get(result_url, headers=headers, timeout=30)
+                result_resp = requests.get(result_url, headers=headers, timeout=60) # Longer timeout for result download
                 result_resp.raise_for_status()  # Raise exception for 4xx/5xx
-                result = result_resp.json()
-                logger.debug(f"Fal AI API result: {result}")
                 
-                # Check if video URL exists in the response
-                if 'video' in result and 'url' in result['video']:
-                    logger.info(f"Found video URL in API response")
-                else:
-                    # If we don't find a video URL but made it this far, something is odd
-                    logger.warning(f"Video URL not found in result despite successful request: {result}")
-                    if settings.DEBUG:
-                        logger.warning("DEBUG=True, returning mock video URL")
-                        return f"https://storage.googleapis.com/falserverless/sample_videos/turntable_demo.mp4"
-                    raise FalServiceError(f"Video URL not found in Fal AI response: {result}")
-            except requests.RequestException as e:
-                logger.error(f"Failed to fetch final result: {e}")
-                if settings.DEBUG:
-                    logger.warning("DEBUG=True, returning mock video URL after failure")
-                    return f"https://storage.googleapis.com/falserverless/sample_videos/turntable_demo.mp4" 
-                raise FalServiceError(f"Failed to fetch Fal AI video result: {str(e)}")
-            
-            # Process the result - extract the video URL
-            # Kling response might be { "video": {"url": ... } }
-            if isinstance(result, dict):
-                # Look for typical keys
-                if 'video' in result and isinstance(result['video'], dict) and 'url' in result['video']:
-                    video_url = result['video']['url']
-                elif 'videos' in result and isinstance(result['videos'], list) and len(result['videos'])>0 and 'url' in result['videos'][0]:
-                    video_url = result['videos'][0]['url']
-                else:
-                    raise FalServiceError(f"Video URL not found in Fal AI response: {result}")
-                logger.info(f"Fal AI video generated successfully: {video_url}")
+                result_data = result_resp.json()
+                logger.debug(f"Fal AI result data: {result_data}")
+                
+                if 'video' not in result_data or 'url' not in result_data['video']:
+                    logger.error(f"Unexpected result structure from Fal AI: {result_data}")
+                    raise FalServiceError("Unexpected result structure from Fal AI: 'video.url' not found.")
+                    
+                video_url = result_data['video']['url']
+                logger.info(f"Successfully retrieved video URL: {video_url}")
                 return video_url
-            raise FalServiceError(f"Unexpected response structure from Fal AI: {result}")
                 
-        except requests.RequestException as e:
-            logger.error(f"Fal API HTTP request error: {e}", exc_info=True)
+            except requests.exceptions.HTTPError as e:
+                # Log the detailed error response before raising
+                error_content = result_resp.text  # Get the raw response body
+                logger.error(f"HTTP error fetching Fal AI result: {e}. Response status: {result_resp.status_code}. Response body: {error_content}")
+                raise FalServiceError(f"Failed to fetch Fal AI video result: {e}. Details: {error_content}") from e
+            except requests.exceptions.RequestException as e:
+                logger.error(f"Request error fetching Fal AI result: {e}")
+                raise FalServiceError(f"Failed to fetch Fal AI video result: {str(e)}") from e
+                
+        except requests.exceptions.RequestException as e:
+            logger.error(f"Fal AI API request failed: {e}")
             raise FalServiceError(f"Fal AI API request failed: {str(e)}") from e
-        except json.JSONDecodeError as e:
-            logger.error(f"Fal API JSON decode error: {e}", exc_info=True)
-            raise FalServiceError(f"Invalid JSON response from Fal AI: {str(e)}") from e
         except Exception as e:
-            logger.error(f"Unexpected error during Fal AI video generation: {e}", exc_info=True)
-            raise FalServiceError(f"Fal AI video generation failed: {str(e)}") from e
+            logger.exception("An unexpected error occurred during Fal AI video generation.") # Log full traceback
+            raise FalServiceError(f"Unexpected error during Fal AI video generation: {str(e)}")
 
 # Instantiate the service for easy import
 fal_service = FalService()
